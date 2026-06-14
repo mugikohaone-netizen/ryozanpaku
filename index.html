@@ -358,12 +358,16 @@ async function startDeploy() {
   startLoadingAnimation();
 
   try {
+    const htmlBase64 = btoa(encodeURIComponent(html).replace(/%([0-9A-F]{2})/g,
+      (match, p1) => String.fromCharCode(parseInt(p1, 16))));
+
     const payload = {
       html,
+      htmlBase64,
       appName: appName || null,
     };
     if (iconBase64) payload.iconBase64 = iconBase64;
-    if (currentRepoName) payload.repoName = currentRepoName;  // 作り直しモード
+    if (currentRepoName) payload.repoName = currentRepoName;
 
     const res = await fetch(WORKER_URL + '/github-deploy', {
       method: 'POST',
