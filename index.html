@@ -133,7 +133,12 @@ textarea.field-input{height:200px;font-size:13px}
 
     <div class="section-title">STEP 2 — HTMLコード</div>
     <div class="field">
-      <div class="field-label">コードを貼り付け <span class="badge">必須</span></div>
+      <div class="field-label">HTMLファイルを選ぶ <span class="badge">推奨</span></div>
+      <input type="file" accept=".html,text/html" id="html-file-input" onchange="onHtmlFileSelect(event)" style="display:none">
+      <button type="button" class="btn btn-ghost" onclick="document.getElementById('html-file-input').click()" id="html-file-btn">📄 .htmlファイルを選ぶ</button>
+    </div>
+    <div class="field">
+      <div class="field-label">または直接貼り付け <span class="badge">省略可</span></div>
       <textarea class="field-input" id="input-html" placeholder="<!DOCTYPE html>&#10;<html>&#10;  ...&#10;</html>"></textarea>
     </div>
 
@@ -284,6 +289,26 @@ function goNew() {
   goPhase('welcome');
 }
 
+
+// ===== HTMLファイル読み込み =====
+function onHtmlFileSelect(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const btn = document.getElementById('html-file-btn');
+  btn.textContent = '⏳ 読み込み中…';
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('input-html').value = e.target.result;
+    btn.textContent = '✅ ' + file.name + '（タップで変更）';
+  };
+  reader.onerror = function() {
+    btn.textContent = '⚠️ 読み込み失敗、もう一度お試しください';
+    setTimeout(() => { btn.textContent = '📄 .htmlファイルを選ぶ'; }, 2000);
+  };
+  reader.readAsText(file, 'UTF-8');
+}
 // ===== アイコン選択（label方式で修正） =====
 function onIconSelect(event) {
   const file = event.target.files[0];
